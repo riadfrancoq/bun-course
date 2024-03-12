@@ -1,14 +1,24 @@
 import { Elysia } from "elysia";
 
-const app = new Elysia().get("/", () => "Hello Elysia").get("/post/:id", ({params: {id}})=>  {
+const app = new Elysia().get("/", () => "Hello Elysia")
+.state({
+  id: 1,
+  email: "jane@gmail.com",
+
+})
+.decorate('getDate', ()=> {return Date.now()})
+.get("/post/:id", ({params: {id}})=>  {
   return {id};
-}).post('/post', ({body, set})=> {
+}).post('/post', ({body, set, store, getDate})=> {
+  console.log(set);
   set.status = 201;
   return body;
 })
 .get("/track/*", ()=> {return "Track Route"})
-.get('/tracks', ()=> {
+.get('/tracks', ({store, getDate})=> {
 
+  console.log(store);
+  console.log(getDate());
     return new Response(JSON.stringify({
       "tracks": [
         'Dancing Feet',
